@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Combat/FTraceSockets.h"
 #include "TraceComponent.generated.h"
 
 // This component will be used by the player and by enemies. However, examples will be shown using the player character.
@@ -14,17 +15,8 @@ class ACTIONCOMBAT_API UTraceComponent : public UActorComponent
 
 	USkeletalMeshComponent* SkeletalComp;
 
-	// Ex: "sword_bottom"
 	UPROPERTY(EditAnywhere)
-	FName StartSocketName;
-
-	// Ex: "FX_Sword_Top"
-	UPROPERTY(EditAnywhere)
-	FName EndSocketName;
-
-	// Ex: "sword_bottom"
-	UPROPERTY(EditAnywhere)
-	FName SocketRotationName;
+	TArray<FTraceSockets> TraceSockets;
 
 	UPROPERTY(EditAnywhere)
 	double BoxCollisionLength{ 30.0 };

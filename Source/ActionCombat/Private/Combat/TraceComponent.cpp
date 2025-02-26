@@ -27,59 +27,68 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	// Return early if we aren't attacking.
 	if (!bIsAttacking) { return; }
 
-	FVector StartSocketLocation{ SkeletalComp->GetSocketLocation(StartSocketName) };
-	FVector EndSocketLocation{ SkeletalComp->GetSocketLocation(EndSocketName) };
-	FQuat ShapeRotation{ SkeletalComp->GetSocketQuaternion(SocketRotationName) };
+	TArray<FHitResult> AllResults;
+	for (const FTraceSockets Socket : TraceSockets)
+	{
+		FVector StartSocketLocation{ SkeletalComp->GetSocketLocation(Socket.StartSocketName) };
+		FVector EndSocketLocation{ SkeletalComp->GetSocketLocation(Socket.EndSocketName) };
+		FQuat ShapeRotation{ SkeletalComp->GetSocketQuaternion(Socket.SocketRotationName) };
 
-	double WeaponLength{ FVector::Distance(StartSocketLocation, EndSocketLocation) };
-	FVector BoxHalfExtent{
-		BoxCollisionLength, BoxCollisionLength, WeaponLength
-	};
-	BoxHalfExtent /= 2;
+		double WeaponLength{ FVector::Distance(StartSocketLocation, EndSocketLocation) };
+		FVector BoxHalfExtent{
+			BoxCollisionLength, BoxCollisionLength, WeaponLength
+		};
+		BoxHalfExtent /= 2;
 
-	TArray<FHitResult> OutResults;
-	FCollisionShape CollisionBox{ FCollisionShape::MakeBox(BoxHalfExtent) };
-	FCollisionQueryParams IgnoreParams{
-		FName { TEXT("Ignore Params") },
-		false,
-		GetOwner()
-	};
+		TArray<FHitResult> OutResults;
+		FCollisionShape CollisionBox{ FCollisionShape::MakeBox(BoxHalfExtent) };
+		FCollisionQueryParams IgnoreParams{
+			FName { TEXT("Ignore Params") },
+			false,
+			GetOwner()
+		};
 
-	bool bHasFoundTargets = GetWorld()->SweepMultiByChannel(
-		OutResults,
-		StartSocketLocation,
-		EndSocketLocation,
-		ShapeRotation,
-		ECollisionChannel::ECC_GameTraceChannel1,
-		CollisionBox,
-		IgnoreParams
-	);
-
-#ifdef UE_BUILD_DEBUG
-	FVector CenterPoint{
-		UKismetMathLibrary::VLerp(
+		bool bHasFoundTargets = GetWorld()->SweepMultiByChannel(
+			OutResults,
 			StartSocketLocation,
 			EndSocketLocation,
-			0.5f
-		)
-	};
+			ShapeRotation,
+			ECollisionChannel::ECC_GameTraceChannel1,
+			CollisionBox,
+			IgnoreParams
+		);
 
-	UKismetSystemLibrary::DrawDebugBox(
-		GetWorld(),
-		CenterPoint,
-		CollisionBox.GetExtent(),
-		bHasFoundTargets ? FLinearColor::Green : FLinearColor::Red,
-		// Need to convert FQuat to FRotator.
-		ShapeRotation.Rotator(),
-		// This is the duration of the debug line in seconds.
-		0.75f,
-		// This is the thickness of the debug line.
-		2.0f
-	);
+		for (FHitResult Hit : OutResults)
+		{
+			AllResults.Add(Hit);
+		}
+
+#ifdef UE_BUILD_DEBUG
+		FVector CenterPoint{
+			UKismetMathLibrary::VLerp(
+				StartSocketLocation,
+				EndSocketLocation,
+				0.5f
+			)
+		};
+
+		UKismetSystemLibrary::DrawDebugBox(
+			GetWorld(),
+			CenterPoint,
+			CollisionBox.GetExtent(),
+			bHasFoundTargets ? FLinearColor::Green : FLinearColor::Red,
+			// Need to convert FQuat to FRotator.
+			ShapeRotation.Rotator(),
+			// This is the duration of the debug line in seconds.
+			0.75f,
+			// This is the thickness of the debug line.
+			2.0f
+		);
 #endif
+	}
 
 	// Return early if there are no results from the sweep.
-	if (OutResults.Num() == 0) { return; }
+	if (AllResults.Num() == 0) { return; }
 
 	float CharacterDamage{ 0.0f };
 
@@ -94,7 +103,7 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	// We use const here to tell the compiler that we won't be modifying the Hit variable.
 	// We use & to pass the Hit variable by reference. This is more efficient than passing by value, which
 	// would create a whole new copy of the Hit variable.
-	for (const FHitResult& Hit : OutResults)
+	for (const FHitResult& Hit : AllResults)
 	{
 		AActor* TargetActor{ Hit.GetActor() };
 
