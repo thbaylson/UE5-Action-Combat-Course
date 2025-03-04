@@ -13,6 +13,17 @@ EBTNodeResult::Type UBTT_RangeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		return EBTNodeResult::Failed;
 	}
 
+	float PlayerDistance{ OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("Distance")) };
+	if (PlayerDistance < MeleeRange)
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), EEnemyState::Melee);
+
+		// This task is supposed to perform a ranged attack, which we aren't doing if the player is in 
+		// melee range, so we abort and return EBTNodeResult::Aborted to make sure memory cleanup happens.
+		AbortTask(OwnerComp, NodeMemory);
+		return EBTNodeResult::Aborted;
+	}
+
 	CharacterRef->PlayAnimMontage(AnimMontage);
 
 	double RandomValue{ UKismetMathLibrary::RandomFloat() };
