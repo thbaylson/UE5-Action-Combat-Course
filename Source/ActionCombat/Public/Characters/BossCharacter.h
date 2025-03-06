@@ -42,7 +42,6 @@ public:
 	void DetectPawn(APawn* PawnToDetect, APawn* PawnDetected);
 
 	virtual float GetDamage() override;
-
 	virtual void Attack() override;
-
+	virtual float GetAnimDuration() override;
 };

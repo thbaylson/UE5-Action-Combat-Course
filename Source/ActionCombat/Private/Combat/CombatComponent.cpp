@@ -58,7 +58,7 @@ void UCombatComponent::ComboAttack()
 	// Broadcast the attack performed event. This will deplete the character's stamina.
 	OnAttackPerformedDelegate.Broadcast(AttackStaminaCost);
 
-	CharacterRef->PlayAnimMontage(AttackAnimations[ComboCounter]);
+	AnimDuration = CharacterRef->PlayAnimMontage(AttackAnimations[ComboCounter]);
 
 	// This seems like a lot of extra work when we could just do:
 	// ComboCounter = (ComboCounter + 1) % AttackAnimations.Num();
@@ -80,5 +80,5 @@ void UCombatComponent::HandleResetAttack()
 void UCombatComponent::RandomAttack()
 {
 	int RandomIndex{ FMath::RandRange(0, AttackAnimations.Num() - 1) };
-	CharacterRef->PlayAnimMontage(AttackAnimations[RandomIndex]);
+	AnimDuration = CharacterRef->PlayAnimMontage(AttackAnimations[RandomIndex]);
 }

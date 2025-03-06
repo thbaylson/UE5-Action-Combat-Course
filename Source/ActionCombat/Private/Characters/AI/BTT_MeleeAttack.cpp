@@ -15,6 +15,8 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	bIsTaskFinished = false;
 	float PlayerDistance{ OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("Distance")) };
 
+	AAIController* AIControllerRef{ OwnerComp.GetAIOwner() };
+
 	if (PlayerDistance > AttackRadius)
 	{
 		APawn* PlayerRef{ GetWorld()->GetFirstPlayerController()->GetPawn() };
@@ -23,16 +25,25 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		MoveRequest.SetUsePathfinding(true);
 		MoveRequest.SetAcceptanceRadius(AcceptanceRadius);
 
-		OwnerComp.GetAIOwner()->MoveTo(MoveRequest);
-		OwnerComp.GetAIOwner()->SetFocus(PlayerRef);
+		AIControllerRef->MoveTo(MoveRequest);
+		AIControllerRef->SetFocus(PlayerRef);
 
 		// For UE5.4 and later, this needs to go above the call to MoveTo.
-		OwnerComp.GetAIOwner()->ReceiveMoveCompleted.AddUnique(MoveCompletedDelegate);
+		AIControllerRef->ReceiveMoveCompleted.AddUnique(MoveCompletedDelegate);
 	}
 	else
 	{
-		IFighter* FighterRef{ Cast<IFighter>(OwnerComp.GetAIOwner()->GetCharacter()) };
+		IFighter* FighterRef{ Cast<IFighter>(AIControllerRef->GetCharacter()) };
 		FighterRef->Attack();
+
+		FTimerHandle AttackTimerHandle;
+		AIControllerRef->GetCharacter()->GetWorldTimerManager().SetTimer(
+			AttackTimerHandle,
+			this,
+			&UBTT_MeleeAttack::FinishAttackTask,
+			FighterRef->GetAnimDuration(),
+			false
+		);
 	}
 
 	return EBTNodeResult::InProgress;
