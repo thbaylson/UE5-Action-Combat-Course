@@ -1,6 +1,8 @@
 #include "Characters/AI/BTT_MeleeAttack.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
+#include "Interfaces/Fighter.h"
+#include "GameFramework/Character.h"
 
 UBTT_MeleeAttack::UBTT_MeleeAttack()
 {
@@ -26,6 +28,11 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 
 		// For UE5.4 and later, this needs to go above the call to MoveTo.
 		OwnerComp.GetAIOwner()->ReceiveMoveCompleted.AddUnique(MoveCompletedDelegate);
+	}
+	else
+	{
+		IFighter* FighterRef{ Cast<IFighter>(OwnerComp.GetAIOwner()->GetCharacter()) };
+		FighterRef->Attack();
 	}
 
 	return EBTNodeResult::InProgress;
