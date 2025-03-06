@@ -66,3 +66,8 @@ float ABossCharacter::GetAnimDuration()
 {
 	return CombatComp->AnimDuration;
 }
+
+float ABossCharacter::GetBossMeleeRange()
+{
+	return StatsComp->Stats[EStat::BossMeleeRange];
+}

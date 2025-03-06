@@ -11,4 +11,5 @@ enum EStat
 	Stamina,
 	MaxStamina UMETA(DisplayName = "Max Stamina"),
 	Strength,
+	BossMeleeRange UMETA(DisplayName = "Boss Melee Range"),
 };

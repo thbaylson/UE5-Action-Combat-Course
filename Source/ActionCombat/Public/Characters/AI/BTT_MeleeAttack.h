@@ -12,9 +12,11 @@ class ACTIONCOMBAT_API UBTT_MeleeAttack : public UBTTaskNode
 {
 	GENERATED_BODY()
 
+	// The maximum distance to trigger an attack.
 	UPROPERTY(EditAnywhere)
 	float AttackRadius{ 200.0f };
 
+	// The maximum distance before the boss will try to move closer.
 	UPROPERTY(EditAnywhere)
 	float AcceptanceRadius{ 100.0f };
 

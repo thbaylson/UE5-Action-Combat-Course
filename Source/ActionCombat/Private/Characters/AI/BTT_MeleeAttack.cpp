@@ -3,11 +3,15 @@
 #include "AIController.h"
 #include "Interfaces/Fighter.h"
 #include "GameFramework/Character.h"
+#include "Characters/EEnemyState.h"
 
 UBTT_MeleeAttack::UBTT_MeleeAttack()
 {
 	bNotifyTick = true;
 	MoveCompletedDelegate.BindUFunction(this, "FinishAttackTask");
+
+	// If we ever plan on having multiples of this enemy at once, we need to set these settings:
+	//bCreateNodeInstance = true;// This property would need to be set in every BTTaskNode constructor that the boss uses.
 }
 
 EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -51,10 +55,26 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 
 void UBTT_MeleeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
+	float PlayerDistance{ OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("Distance")) };
+
+	AAIController* AIControllerRef{ OwnerComp.GetAIOwner() };
+
+	if (PlayerDistance > Cast<IFighter>(AIControllerRef->GetCharacter())->GetBossMeleeRange())
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), EEnemyState::Range);
+
+		AIControllerRef->StopMovement();
+		AIControllerRef->ClearFocus(EAIFocusPriority::Gameplay);
+		AIControllerRef->ReceiveMoveCompleted.Remove(MoveCompletedDelegate);
+
+		AbortTask(OwnerComp, NodeMemory);
+		FinishLatentTask(OwnerComp, EBTNodeResult::Aborted);
+	}
+
 	// Return early if the task is still executing. Everything past here will cleanup the task.
 	if (!bIsTaskFinished) { return; }
 
-	OwnerComp.GetAIOwner()->ReceiveMoveCompleted.Remove(MoveCompletedDelegate);
+	AIControllerRef->ReceiveMoveCompleted.Remove(MoveCompletedDelegate);
 	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 }
 
