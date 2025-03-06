@@ -46,6 +46,7 @@ void ABossCharacter::DetectPawn(APawn* PawnToDetect, APawn* PawnDetected)
 
 	if ((CurrentState != EEnemyState::Idle) || (PawnToDetect != PawnDetected)) { return; }
 
+	// TODO: We need a way to go back to Idle if the player is no longer detected.
 	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), EEnemyState::Range);
 }
 
