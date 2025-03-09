@@ -77,3 +77,8 @@ void UStatsComponent::EnableStaminaRegeneration()
 {
 	bCanRegenerateStamina = true;
 }
+
+float UStatsComponent::GetStatPercentage(EStat Current, EStat Max)
+{
+	return Stats[Current] / Stats[Max];
+}

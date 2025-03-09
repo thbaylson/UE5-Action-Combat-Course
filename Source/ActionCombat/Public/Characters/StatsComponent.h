@@ -45,5 +45,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void EnableStaminaRegeneration();
+
+	UFUNCTION(BlueprintPure)
+	float GetStatPercentage(EStat Current, EStat Max);
 		
 };
