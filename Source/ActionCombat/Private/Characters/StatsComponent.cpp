@@ -29,11 +29,17 @@ void UStatsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 void UStatsComponent::ReduceHealth(float Amount)
 {
+	// If we're already dead, do nothing
 	if (Stats[EStat::Health] <= 0) { return; }
 
 	Stats[EStat::Health] = UKismetMathLibrary::FClamp(Stats[EStat::Health] - Amount, 0.0f, Stats[EStat::MaxHealth]);
-
 	OnHealthPercentUpdateDelegate.Broadcast(GetStatPercentage(EStat::Health, EStat::MaxHealth));
+
+	// If we just now died, broadcast the event.
+	if (Stats[EStat::Health] <= 0)
+	{
+		OnZeroHealthDelegate.Broadcast();
+	}
 }
 
 // Note: The check for if we have enough stamina is handled by IMainPlayer. Strange, that we didn't add it to IFighter instead.
