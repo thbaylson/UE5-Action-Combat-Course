@@ -32,6 +32,8 @@ void UStatsComponent::ReduceHealth(float Amount)
 	if (Stats[EStat::Health] <= 0) { return; }
 
 	Stats[EStat::Health] = UKismetMathLibrary::FClamp(Stats[EStat::Health] - Amount, 0.0f, Stats[EStat::MaxHealth]);
+
+	OnHealthPercentUpdateDelegate.Broadcast(GetStatPercentage(EStat::Health, EStat::MaxHealth));
 }
 
 // Note: The check for if we have enough stamina is handled by IMainPlayer. Strange, that we didn't add it to IFighter instead.
@@ -58,6 +60,8 @@ void UStatsComponent::ReduceStamina(float Amount)
 		// This function will be called after the delay timer runs out.
 		EnableStaminaRegenActionInfo
 	);
+
+	OnStaminaPercentUpdateDelegate.Broadcast(GetStatPercentage(EStat::Stamina, EStat::MaxStamina));
 }
 
 void UStatsComponent::RegenerateStamina()
@@ -71,6 +75,8 @@ void UStatsComponent::RegenerateStamina()
 		GetWorld()->DeltaTimeSeconds,
 		StaminaRegenerationRate
 	);
+
+	OnStaminaPercentUpdateDelegate.Broadcast(GetStatPercentage(EStat::Stamina, EStat::MaxStamina));
 }
 
 void UStatsComponent::EnableStaminaRegeneration()
