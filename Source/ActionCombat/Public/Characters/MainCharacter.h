@@ -56,6 +56,8 @@ public:
 
 	virtual bool HasEnoughStamina(float StaminaCost) override;
 
+	virtual void EndLockonWithActor(AActor* ActorRef) override;
+
 	UFUNCTION(BlueprintCallable)
 	void HandleDeath();
 };

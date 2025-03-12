@@ -55,6 +55,12 @@ bool AMainCharacter::HasEnoughStamina(float StaminaCost)
 	return StaminaCost <= StatsComp->Stats[EStat::Stamina];
 }
 
+void AMainCharacter::EndLockonWithActor(AActor* ActorRef)
+{
+	if (ActorRef != LockonComp->CurrentTargetActor) { return; }
+	LockonComp->EndLockon();
+}
+
 void AMainCharacter::HandleDeath()
 {
 	PlayAnimMontage(DeathAnimMontage);

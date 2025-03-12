@@ -7,6 +7,7 @@
 #include "Characters/MainCharacter.h"
 #include "BrainComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Interfaces/MainPlayer.h"
 
 // Sets default values
 ABossCharacter::ABossCharacter()
@@ -87,11 +88,33 @@ void ABossCharacter::HandlePlayerDeath()
 
 void ABossCharacter::HandleDeath()
 {
-	PlayAnimMontage(DeathAnimMontage);
+	float AnimDuration = PlayAnimMontage(DeathAnimMontage);
 	
 	// Stop the AI from running.
 	ControllerRef->GetBrainComponent()->StopLogic("Defeated");
 
 	// Disable collision.
 	FindComponentByClass<UCapsuleComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// End lockon.
+	IMainPlayer* PlayerRef{ GetWorld()->GetFirstPlayerController()->GetPawn<IMainPlayer>() };
+	if (PlayerRef)
+	{
+		PlayerRef->EndLockonWithActor(this);
+	}
+
+	// Destroy the character after the animation is done.
+	FTimerHandle DeathAnimTimerHandle;
+	ControllerRef->GetWorldTimerManager().SetTimer(
+		DeathAnimTimerHandle,
+		this,
+		&ABossCharacter::FinishDeathAnim,
+		AnimDuration,
+		false
+	);
+}
+
+void ABossCharacter::FinishDeathAnim()
+{
+	Destroy();
 }
