@@ -9,4 +9,5 @@ enum EEnemyState
 	Range,
 	Charge,
 	Melee,
+	GameOver UMETA(DisplayName = "Game Over"),
 };

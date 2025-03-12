@@ -17,6 +17,11 @@ class ACTIONCOMBAT_API ABossCharacter : public ACharacter, public IEnemy, public
 
 	class UBlackboardComponent* BlackboardComp;
 
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* DeathAnimMontage;
+
+	class AAIController* ControllerRef;
+
 public:
 	// Sets default values for this character's properties
 	ABossCharacter();
@@ -45,4 +50,10 @@ public:
 	virtual void Attack() override;
 	virtual float GetAnimDuration() override;
 	virtual float GetBossMeleeRange() override;
+
+	UFUNCTION()
+	void HandlePlayerDeath();
+
+	UFUNCTION(BlueprintCallable)
+	void HandleDeath();
 };

@@ -4,6 +4,9 @@
 #include "Combat/CombatComponent.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Characters/MainCharacter.h"
+#include "BrainComponent.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ABossCharacter::ABossCharacter()
@@ -19,11 +22,16 @@ ABossCharacter::ABossCharacter()
 void ABossCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ControllerRef = GetController<AAIController>();
 	
 	// Note: The blackboard component comes from the AIController instead of the character itself.
-	BlackboardComp = GetController<AAIController>()->GetBlackboardComponent();
+	BlackboardComp = ControllerRef->GetBlackboardComponent();
 
 	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), InitialState);
+
+	GetWorld()->GetFirstPlayerController()->GetPawn<AMainCharacter>()
+		->StatsComp->OnZeroHealthDelegate.AddDynamic(this, &ABossCharacter::HandlePlayerDeath);
 }
 
 // Called every frame
@@ -70,4 +78,20 @@ float ABossCharacter::GetAnimDuration()
 float ABossCharacter::GetBossMeleeRange()
 {
 	return StatsComp->Stats[EStat::BossMeleeRange];
+}
+
+void ABossCharacter::HandlePlayerDeath()
+{
+	ControllerRef->GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), EEnemyState::GameOver);
+}
+
+void ABossCharacter::HandleDeath()
+{
+	PlayAnimMontage(DeathAnimMontage);
+	
+	// Stop the AI from running.
+	ControllerRef->GetBrainComponent()->StopLogic("Defeated");
+
+	// Disable collision.
+	FindComponentByClass<UCapsuleComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
