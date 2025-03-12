@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,6 +11,10 @@ UCLASS()
 class ACTIONCOMBAT_API UPlayerAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bIsBlocking{ false };
 
 // Variables that will be exposed to Blueprints should be protected or public.
 protected:
