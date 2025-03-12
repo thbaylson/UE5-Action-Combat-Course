@@ -53,10 +53,9 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual float GetDamage() override;
-
 	virtual bool HasEnoughStamina(float StaminaCost) override;
-
 	virtual void EndLockonWithActor(AActor* ActorRef) override;
+	virtual bool CanTakeDamage(AActor* Opponent) override;
 
 	UFUNCTION(BlueprintCallable)
 	void HandleDeath();

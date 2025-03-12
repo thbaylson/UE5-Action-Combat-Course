@@ -1,7 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Combat/BlockComponent.h"
+#include "GameFramework/Character.h"
+#include "Interfaces/MainPlayer.h"
 
 // Sets default values for this component's properties
 UBlockComponent::UBlockComponent()
@@ -30,5 +29,26 @@ void UBlockComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+bool UBlockComponent::IsBlockSuccessful(AActor* Opponent)
+{
+	// Check if the owner of this component inherits from MainPlayer.
+	ACharacter* CharacterRef{ GetOwner<ACharacter>() };
+	if (!CharacterRef->Implements<UMainPlayer>()) { return false; }
+
+	// Check if we have enough stamina to block.
+	IMainPlayer* PlayerRef{ Cast<IMainPlayer>(CharacterRef) };
+	if (!PlayerRef->HasEnoughStamina(StaminaCost)) { return false; }
+
+	// Check if the opponent is facing towards us.
+	FVector OpponentForward{ Opponent->GetActorForwardVector() };
+	FVector PlayerForward{ CharacterRef->GetActorForwardVector() };
+	// Returns a negative number if the two actors are facing towards each other, otherwise a positive number.
+	double DotProduct{ FVector::DotProduct(OpponentForward, PlayerForward) };
+	if (DotProduct > 0) { return false; }
+	
+	// By this point, all checks have passed, so the block is successful.
+	return true;
 }
 

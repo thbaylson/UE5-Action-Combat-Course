@@ -60,8 +60,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	// This implementation requires us to use the "Damage Causer" pin from "AnyDamage" event in the blueprint.
+	// "Instigated By" would be more correct. Find details here: 
+	// https://www.gamedev.tv/courses/unreal-action-combat/using-dot-products/6620/a-bit-more-correct-way-to-connect-pins-to-reduce-health/17151
 	UFUNCTION(BlueprintCallable)
-	void ReduceHealth(float Amount);
+	void TryReduceHealth(AActor* Opponent, float Amount);
 
 	UFUNCTION(BlueprintCallable)
 	void ReduceStamina(float Amount);

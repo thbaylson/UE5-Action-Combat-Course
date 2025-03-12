@@ -61,6 +61,15 @@ void AMainCharacter::EndLockonWithActor(AActor* ActorRef)
 	LockonComp->EndLockon();
 }
 
+bool AMainCharacter::CanTakeDamage(AActor* Opponent)
+{
+	// If the block is successful, then we cannot take damage.
+	if (PlayerAnim->bIsBlocking) { return !BlockComp->IsBlockSuccessful(Opponent); }
+	
+	// Assume the main character can always take damage, unless something is actively preventing it.
+	return true;
+}
+
 void AMainCharacter::HandleDeath()
 {
 	PlayAnimMontage(DeathAnimMontage);
