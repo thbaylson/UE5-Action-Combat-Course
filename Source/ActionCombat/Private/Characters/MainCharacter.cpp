@@ -8,7 +8,7 @@
 #include "Combat/CombatComponent.h"
 #include "Combat/LockonComponent.h"
 #include "Combat/TraceComponent.h"
-#include "Combat/BlockComponent.h"
+#include "Combat/TheBlockComponent.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -22,7 +22,7 @@ AMainCharacter::AMainCharacter()
 	CombatComp = CreateDefaultSubobject<UCombatComponent>(TEXT("Combat Component"));
 	LockonComp = CreateDefaultSubobject<ULockonComponent>(TEXT("Lockon Component"));
 	TraceComp = CreateDefaultSubobject<UTraceComponent>(TEXT("Trace Component"));
-	BlockComp = CreateDefaultSubobject<UBlockComponent>(TEXT("Block Component"));
+	TheBlockComp = CreateDefaultSubobject<UTheBlockComponent>(TEXT("The Final Block Component"));
 }
 
 // Called when the game starts or when spawned
@@ -64,7 +64,7 @@ void AMainCharacter::EndLockonWithActor(AActor* ActorRef)
 bool AMainCharacter::CanTakeDamage(AActor* Opponent)
 {
 	// If the block is successful, then we cannot take damage.
-	if (PlayerAnim->bIsBlocking) { return !BlockComp->IsBlockSuccessful(Opponent); }
+	if (PlayerAnim->bIsBlocking) { return !TheBlockComp->IsBlockSuccessful(Opponent); }
 	
 	// Assume the main character can always take damage, unless something is actively preventing it.
 	return true;

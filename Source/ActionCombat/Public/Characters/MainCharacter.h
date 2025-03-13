@@ -36,7 +36,7 @@ public:
 	class UTraceComponent* TraceComp;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class UBlockComponent* BlockComp;
+	class UTheBlockComponent* TheBlockComp;
 
 protected:
 	// Called when the game starts or when spawned

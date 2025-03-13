@@ -1,12 +1,14 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "BlockComponent.generated.h"
+#include "TheBlockComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class ACTIONCOMBAT_API UBlockComponent : public UActorComponent
+class ACTIONCOMBAT_API UTheBlockComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -15,7 +17,7 @@ class ACTIONCOMBAT_API UBlockComponent : public UActorComponent
 
 public:	
 	// Sets default values for this component's properties
-	UBlockComponent();
+	UTheBlockComponent();
 
 protected:
 	// Called when the game starts
@@ -26,5 +28,4 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	bool IsBlockSuccessful(AActor* Opponent);
-		
 };
