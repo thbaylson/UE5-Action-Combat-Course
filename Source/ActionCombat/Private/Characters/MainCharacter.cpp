@@ -63,6 +63,9 @@ void AMainCharacter::EndLockonWithActor(AActor* ActorRef)
 
 bool AMainCharacter::CanTakeDamage(AActor* Opponent)
 {
+	// If we're rolling, then we cannot take damage.
+	if (PlayerActionsComp->bIsRollActive) { return false; }
+
 	// If the block is successful, then we cannot take damage.
 	if (PlayerAnim->bIsBlocking) { return !TheBlockComp->IsBlockSuccessful(Opponent); }
 	
