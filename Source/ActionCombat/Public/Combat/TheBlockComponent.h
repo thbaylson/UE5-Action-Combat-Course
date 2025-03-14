@@ -6,6 +6,11 @@
 #include "Components/ActorComponent.h"
 #include "TheBlockComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
+	FOnBlockSignature,
+	UTheBlockComponent, OnBlockDeletegate,
+	float, Cost
+);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONCOMBAT_API UTheBlockComponent : public UActorComponent
@@ -15,9 +20,15 @@ class ACTIONCOMBAT_API UTheBlockComponent : public UActorComponent
 	UPROPERTY(EditAnywhere)
 	float StaminaCost{ 10.0f };
 
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* BlockAnimMontage;
+
 public:	
 	// Sets default values for this component's properties
 	UTheBlockComponent();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnBlockSignature OnBlockDeletegate;
 
 protected:
 	// Called when the game starts

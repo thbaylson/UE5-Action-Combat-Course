@@ -52,6 +52,9 @@ bool UTheBlockComponent::IsBlockSuccessful(AActor* Opponent)
 	if (DotProduct > 0) { return false; }
 
 	// By this point, all checks have passed, so the block is successful.
+	CharacterRef->PlayAnimMontage(BlockAnimMontage);
+	OnBlockDeletegate.Broadcast(StaminaCost);
+
 	return true;
 }
 

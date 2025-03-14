@@ -75,3 +75,8 @@ void AMainCharacter::HandleDeath()
 	PlayAnimMontage(DeathAnimMontage);
 	DisableInput(GetController<APlayerController>());
 }
+
+void AMainCharacter::PlayHurtAnimMontage()
+{
+	PlayAnimMontage(HurtAnimMontage);
+}
