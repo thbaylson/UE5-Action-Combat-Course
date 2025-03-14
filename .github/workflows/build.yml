@@ -1,0 +1,40 @@
+name: UE5 Build
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  Build:
+    name: Build
+    runs-on: windows-latest
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          lfs: "true"
+          
+      - name: Verify folder structure
+        shell: pwsh
+        run: |
+          Write-Host "c: Directory"
+          cd c:
+          ls
+          Write-Host "c:/Unreal Engine Directory"
+          cd "c:/Unreal Engine"
+          ls
+          Write-Host "d: Directory"
+          cd d:
+          ls
+          Write-Host "d:/a Directory"
+          cd "d:/a"
+          ls
+      
+      - name: Build UE Project
+        uses: OrchidIsle/UE5-Build-Project@latest
+        with:
+          RUNUAT_PATH: 'C:/Unreal Engine/UE5.3_Source/Engine/Build/BatchFiles/RunUAT.bat'
+          UPROJECT_PATH: ${{ github.workspace }}\ActionCombat.uproject
+          BUILD_CONFIG: Development
+          PLATFORM: Win64
