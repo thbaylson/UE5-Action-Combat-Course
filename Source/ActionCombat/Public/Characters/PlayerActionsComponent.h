@@ -10,6 +10,12 @@ DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
 	float, SprintCost
 );
 
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
+	FOnRollSignature,
+	UPlayerActionsComponent, OnRollDelegate,
+	float, RollStaminaCost
+);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONCOMBAT_API UPlayerActionsComponent : public UActorComponent
 {
@@ -30,12 +36,23 @@ class ACTIONCOMBAT_API UPlayerActionsComponent : public UActorComponent
 	UPROPERTY(EditAnywhere)
 	float SprintCost{ 0.1f };
 
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* RollAnimMontage;
+
+	UPROPERTY(EditAnywhere)
+	float RollStaminaCost{ 5.0f };
+
+	bool bIsRollActive{ false };
+
 public:	
 	// Sets default values for this component's properties
 	UPlayerActionsComponent();
 
 	UPROPERTY(BlueprintAssignable)
 	FOnSprintSignature OnSprintDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnRollSignature OnRollDelegate;
 
 protected:
 	// Called when the game starts
@@ -50,5 +67,11 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Walk();
+
+	UFUNCTION(BlueprintCallable)
+	void Roll();
+
+	UFUNCTION()// Reminder: The empty UFUNCTION macro is needed for the timer.
+	void FinishRollAnim();
 
 };

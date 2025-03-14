@@ -2,6 +2,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interfaces/MainPlayer.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UPlayerActionsComponent::UPlayerActionsComponent()
@@ -54,4 +55,44 @@ void UPlayerActionsComponent::Sprint()
 void UPlayerActionsComponent::Walk()
 {
 	MovementComp->MaxWalkSpeed = WalkSpeed;
+}
+
+void UPlayerActionsComponent::Roll()
+{
+	// Return early if the player is already rolling.
+	if (bIsRollActive) { return; }
+
+	// Return early if the player doesn't have enough stamina.
+	if (!IPlayerRef->HasEnoughStamina(RollStaminaCost)) { return; }
+
+	bIsRollActive = true;
+
+	OnRollDelegate.Broadcast(RollStaminaCost);
+
+	// If the player is not moving, roll in the direction the player is facing, otherwise roll in the direction of the movement.
+	FVector Direction{ CharacterRef->GetCharacterMovement()->Velocity.Length() < 1 ?
+		CharacterRef->GetActorForwardVector() :
+		CharacterRef->GetLastMovementInputVector() 
+	};
+
+	// Note: The rotation is only on the XAxis.
+	FRotator NewRot{ UKismetMathLibrary::MakeRotFromX(Direction) };
+
+	CharacterRef->SetActorRotation(NewRot);
+
+	float AnimationDuration = CharacterRef->PlayAnimMontage(RollAnimMontage);
+
+	FTimerHandle RollTimerHandle;
+	CharacterRef->GetWorldTimerManager().SetTimer(
+		RollTimerHandle,
+		this,
+		&UPlayerActionsComponent::FinishRollAnim,
+		AnimationDuration,
+		false
+	);
+}
+
+void UPlayerActionsComponent::FinishRollAnim()
+{
+	bIsRollActive = false;
 }
