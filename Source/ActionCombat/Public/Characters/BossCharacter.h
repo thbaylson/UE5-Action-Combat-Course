@@ -50,6 +50,7 @@ public:
 	virtual void Attack() override;
 	virtual float GetAnimDuration() override;
 	virtual float GetBossMeleeRange() override;
+	virtual bool CanTakeDamage(AActor* Opponent) override;
 
 	UFUNCTION()
 	void HandlePlayerDeath();

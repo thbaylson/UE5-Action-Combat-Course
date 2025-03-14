@@ -64,5 +64,5 @@ public:
 	void HandleDeath();
 
 	UFUNCTION(BlueprintCallable)
-	void PlayHurtAnimMontage();
+	void PlayHurtAnimMontage(TSubclassOf<class UCameraShakeBase> CameraShakeTemplate);
 };

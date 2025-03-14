@@ -81,6 +81,11 @@ float ABossCharacter::GetBossMeleeRange()
 	return StatsComp->Stats[EStat::BossMeleeRange];
 }
 
+bool ABossCharacter::CanTakeDamage(AActor* Opponent)
+{
+	return true;
+}
+
 void ABossCharacter::HandlePlayerDeath()
 {
 	ControllerRef->GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), EEnemyState::GameOver);

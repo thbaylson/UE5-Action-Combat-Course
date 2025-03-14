@@ -79,7 +79,12 @@ void AMainCharacter::HandleDeath()
 	DisableInput(GetController<APlayerController>());
 }
 
-void AMainCharacter::PlayHurtAnimMontage()
+void AMainCharacter::PlayHurtAnimMontage(TSubclassOf<class UCameraShakeBase> CameraShakeTemplate)
 {
 	PlayAnimMontage(HurtAnimMontage);
+
+	if (CameraShakeTemplate)
+	{
+		GetController<APlayerController>()->ClientStartCameraShake(CameraShakeTemplate);
+	}
 }
