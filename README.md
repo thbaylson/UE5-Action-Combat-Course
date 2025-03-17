@@ -2,6 +2,7 @@
 
 This project is the result of a course I took to explore creating third-person melee combat mechanics in Unreal Engine 5. The process helped me improve my C++ skills while building a dynamic combat system inspired by AAA games.
 
+[Play the game for free on Itch.io!](https://thbaylson.itch.io/ue-action-combat-prototype)
 Course: ["Unreal Engine 5 C++: Make Your Own Action Combat Game" by Luis Ramirez](https://www.gamedev.tv/courses/unreal-action-combat).
 
 ## About This Project
